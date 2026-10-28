@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Until Dawn</title>
+
+    <!-- Stops the browser asking for a favicon.ico that doesn't exist -->
+    <link rel="icon" href="data:,">
+
+    <!-- Fonts are local: see the @font-face rules in style.css
+         (Creepster, Pixelify Sans, VT323 in assets/fonts/). -->
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main id="game-container">
+
+        <div id="game-frame">
+
+            <canvas id="gameCanvas"></canvas>
+
+            <!-- Sound toggle -->
+            <button id="mute-btn" class="icon-btn" title="Mute / unmute (M)" aria-label="Toggle sound">
+                SOUND: ON
+            </button>
+
+            <!-- LOADING SCREEN (shown first) -->
+            <section id="loading-screen" class="overlay overlay-intro">
+
+                <h1 class="title load-title">UNTIL DAWN</h1>
+
+                <div class="load-bar" aria-hidden="true">
+                    <div id="load-fill" class="load-fill"></div>
+                </div>
+
+                <p id="load-text" class="load-text">Loading... 0%</p>
+
+                <p id="load-tip" class="load-tip"></p>
+
+                <p id="load-prompt" class="load-prompt hidden">PRESS ANY KEY OR TAP TO BEGIN</p>
+
+            </section>
+
+            <!-- STORY INTRO
+                 Text is typed out by main.js (see the STORY list there).
+                 Any key or tap moves on, Esc skips. -->
+            <section id="intro-screen" class="overlay overlay-story hidden">
+
+                <p class="story-skip">ESC TO SKIP</p>
+
+                <p id="story-text" class="story-text"></p>
+
+                <p id="story-next" class="story-next hidden">PRESS ANY KEY &#9656;</p>
+
+                <div class="story-dots" aria-hidden="true">
+                    <span id="story-dot-0"></span>
+                    <span id="story-dot-1"></span>
+                    <span id="story-dot-2"></span>
+                    <span id="story-dot-3"></span>
+                </div>
+
+            </section>
+
+            <!-- MAIN MENU -->
+            <section id="menu-screen" class="overlay hidden">
+
+                <h1 class="title">UNTIL DAWN</h1>
+                <p class="tagline">Survive the night. Outrun the wolf.</p>
+
+                <div class="menu-buttons">
+                    <button id="btn-play" class="btn primary">PLAY</button>
+                    <div class="menu-grid">
+                        <button id="btn-howto" class="btn">HOW TO PLAY</button>
+                        <button id="btn-story" class="btn">THE STORY</button>
+                        <button id="btn-shop" class="btn">SHOP</button>
+                        <button id="btn-missions" class="btn">MISSIONS</button>
+                    </div>
+                </div>
+
+                <p class="best">BEST <span id="menu-best">0</span></p>
+
+                <p class="best bank">MOON SHARDS <span id="menu-bank">0</span></p>
+
+                <p class="menu-hint">Press <kbd>SPACE</kbd> to play</p>
+
+            </section>
+
+            <!-- HOW TO PLAY -->
+            <section id="howto-screen" class="overlay overlay-howto hidden">
+
+                <h2 class="heading">HOW TO PLAY</h2>
+
+                <div class="keylist">
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>&uarr;</kbd><kbd>W</kbd><kbd>SPACE</kbd></span>
+                        <span class="what">Jump <em>hold for a higher jump</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>&rarr;</kbd><kbd>D</kbd></span>
+                        <span class="what">Sprint ahead <em>more score, but less warning</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>&larr;</kbd><kbd>A</kbd></span>
+                        <span class="what">Fall back <em>fine-tune your jumps</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>&darr;</kbd><kbd>S</kbd></span>
+                        <span class="what">Drop fast <em>while in the air</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>Q</kbd><kbd>E</kbd><kbd>J</kbd><kbd>K</kbd></span>
+                        <span class="what">Attack <em>smash logs, stagger the wolf</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>R</kbd></span>
+                        <span class="what">Moonlight Burst <em>6 shards fill it, holds the wolf back</em></span>
+                    </div>
+
+                    <div class="keyrow">
+                        <span class="keys"><kbd>P</kbd><kbd>ESC</kbd><kbd>M</kbd></span>
+                        <span class="what">Pause / mute</span>
+                    </div>
+
+                </div>
+
+                <ul class="tips">
+                    <li>Swing just as the wolf lunges to knock it back.</li>
+                    <li>Sprint away as it pounces and its bite misses.</li>
+                    <li>The Silver Charm blocks one bite. Pause (P) shows your missions.</li>
+                </ul>
+
+                <button id="btn-howto-back" class="btn primary">BACK</button>
+
+            </section>
+
+            <!-- SHOP (rows are built by main.js from the UPGRADES list) -->
+            <section id="shop-screen" class="overlay overlay-shop hidden">
+
+                <h2 class="heading">THE SHOP</h2>
+
+                <p class="shop-bank">
+                    <span class="shard-icon" aria-hidden="true"></span>
+                    <span><span id="shop-bank">0</span> MOON SHARDS</span>
+                </p>
+
+                <div id="shop-list" class="shop-list"></div>
+
+                <p id="shop-msg" class="shop-msg"></p>
+
+                <button id="btn-shop-back" class="btn primary">BACK</button>
+
+            </section>
+
+            <!-- MISSIONS (opened from the menu; rows are built by main.js) -->
+            <section id="missions-screen" class="overlay overlay-missions hidden">
+
+                <h2 class="heading">MISSIONS</h2>
+
+                <p class="mission-level">LEVEL <span id="missions-level">1</span></p>
+
+                <div id="missions-list" class="mission-list"></div>
+
+                <p id="missions-note" class="mission-note"></p>
+
+                <button id="btn-missions-back" class="btn primary">BACK</button>
+
+            </section>
+
+            <section id="pause-screen" class="overlay overlay-missions hidden">
+
+                <h2 class="heading">PAUSED</h2>
+
+                <p class="mission-level">MISSIONS &middot; LEVEL <span id="pause-level">1</span></p>
+
+                <div id="pause-missions" class="mission-list"></div>
+
+                <p id="pause-note" class="mission-note"></p>
+
+                <div class="pause-buttons">
+                    <button id="btn-resume" class="btn primary">RESUME</button>
+                    <button id="btn-pause-menu" class="btn">MAIN MENU</button>
+                </div>
+
+            </section>
+
+            <!-- GAME OVER -->
+            <section id="gameover-screen" class="overlay overlay-dark hidden">
+
+                <h2 class="heading danger go-title">THE WOLF GOT YOU</h2>
+
+                <p id="gameover-msg" class="go-msg"></p>
+
+                <div class="score-card go-card">
+
+                    <div class="score-main">
+                        <span class="label">SCORE</span>
+                        <strong id="final-score">0</strong>
+                    </div>
+
+                    <div class="score-rows">
+
+                        <div class="row">
+                            <span>DISTANCE</span>
+                            <strong><span id="final-distance">0</span> m</strong>
+                        </div>
+
+                        <div class="row" id="row-nights">
+                            <span>NIGHTS SURVIVED</span>
+                            <strong id="final-nights">0</strong>
+                        </div>
+
+                        <div class="row" id="row-shards">
+                            <span>MOON SHARDS</span>
+                            <strong id="final-shards">0</strong>
+                        </div>
+
+                        <div class="row" id="row-missions">
+                            <span>MISSIONS</span>
+                            <strong id="final-missions">0 done</strong>
+                        </div>
+
+                        <div class="row">
+                            <span>BEST</span>
+                            <strong id="final-best">0</strong>
+                        </div>
+
+                    </div>
+
+                    <p id="new-best" class="new-best hidden">&#9733; NEW BEST &#9733;</p>
+
+                </div>
+
+                <div class="go-buttons">
+                    <button id="btn-restart" class="btn primary">TRY AGAIN</button>
+                    <button id="btn-gameover-menu" class="btn">MAIN MENU</button>
+                </div>
+
+                <p class="hint go-hint">Press <kbd>SPACE</kbd> to try again</p>
+
+            </section>
+
+            <!-- Touch controls (only shown on touch screens) -->
+            <div id="touch-controls">
+                <button id="touch-attack" class="touch-btn">ATTACK</button>
+                <button id="touch-jump" class="touch-btn">JUMP</button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="main.js"></script>
+</body>
+</html>
